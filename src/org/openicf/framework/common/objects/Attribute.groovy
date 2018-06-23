@@ -2,13 +2,8 @@ package org.openicf.framework.common.objects
 
 import org.openicf.framework.common.security.GuardedString
 
-import static org.identityconnectors.framework.common.objects.NameUtil.nameHashCode;
-import static org.identityconnectors.framework.common.objects.NameUtil.namesEqual;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import static org.openicf.framework.common.objects.NameUtil.nameHashCode;
+import static org.openicf.framework.common.objects.NameUtil.namesEqual;
 
 class Attribute {
     final String name;

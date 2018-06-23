@@ -26,4 +26,13 @@ class CollectionUtil {
         def l = new ArrayList(nullAsEmpty(list));
         return l.asImmutable()
     }
+
+    static Set newReadOnlySet(Object... arr) {
+        return Collections.unmodifiableSet(newSet(arr));
+    }
+
+    static Set newReadOnlySet(Collection c) {
+        return Collections.unmodifiableSet(newSet(c));
+    }
+
 }

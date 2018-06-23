@@ -38,72 +38,31 @@ class AttributeInfo {
         }
     }
 
-    /**
-     * Determines if the attribute is readable.
-     *
-     * @return true if the attribute is readable else false.
-     */
-    public boolean isReadable() {
+    boolean isReadable() {
         return !flags.contains(Flags.NOT_READABLE);
     }
 
-    /**
-     * Determines if the attribute is writable on create.
-     *
-     * @return true if the attribute is writable on create else false.
-     */
-    public boolean isCreateable() {
+    boolean isCreateable() {
         return !flags.contains(Flags.NOT_CREATABLE);
     }
 
-    /**
-     * Determines if the attribute is writable on update.
-     *
-     * @return true if the attribute is writable on update else false.
-     */
-    public boolean isUpdateable() {
+    boolean isUpdateable() {
         return !flags.contains(Flags.NOT_UPDATEABLE);
     }
 
-    /**
-     * Determines whether this attribute is required for creates.
-     *
-     * @return true if the attribute is required for an object else false.
-     */
-    public boolean isRequired() {
+    boolean isRequired() {
         return flags.contains(Flags.REQUIRED);
     }
 
-    /**
-     * Determines if this attribute can handle multiple values.
-     *
-     * There is a special case with byte[] since in most instances this denotes
-     * a single object.
-     *
-     * @return true if the attribute is multi-value otherwise false.
-     */
-    public boolean isMultiValued() {
+    boolean isMultiValued() {
         return flags.contains(Flags.MULTIVALUED);
     }
 
-    /**
-     * Determines if the attribute is returned by default.
-     *
-     * Indicates if an {@link Attribute} will be returned during
-     * {@link SearchApiOp}, {@link SyncApiOp} or {@link GetApiOp} inside a
-     * {@link ConnectorObject} by default. The default value is
-     * <code>true</code>.
-     *
-     * @return false if the attribute should not be returned by default.
-     */
-    public boolean isReturnedByDefault() {
+    boolean isReturnedByDefault() {
         return !flags.contains(Flags.NOT_RETURNED_BY_DEFAULT);
     }
 
-    /**
-     * Determines if the name parameter matches this {@link AttributeInfo}.
-     */
-    public boolean is(String name) {
+    boolean is(String name) {
         return namesEqual(this.name, name);
     }
 

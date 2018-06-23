@@ -35,4 +35,20 @@ class CollectionUtil {
         return Collections.unmodifiableSet(newSet(c));
     }
 
+    static Set newSet(Collection c) {
+        return new HashSet(nullAsEmpty(c));
+    }
+
+    static Set newSet(Object... arr) {
+        // default to empty..
+        def ret = new HashSet();
+        if (arr != null && arr.length != 0) {
+            // now empty populate the set..
+            for (elem in arr) {
+                ret.add(elem);
+            }
+        }
+        return ret;
+    }
+
 }

@@ -3,7 +3,7 @@ package org.openicf.framework.common.objects
 class ScriptContextBuilder {
     String scriptLanguage
     String scriptText
-    final Map scriptArguments = new HashMap
+    final Map scriptArguments = new HashMap()
 
     ScriptContextBuilder() {
 

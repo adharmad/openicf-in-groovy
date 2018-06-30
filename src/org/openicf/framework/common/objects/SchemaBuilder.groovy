@@ -2,6 +2,7 @@ package org.openicf.framework.common.objects
 
 import org.openicf.framework.api.operations.APIOperation
 import org.openicf.framework.spi.Connector
+import org.openicf.framework.spi.operations.SPIOperation
 
 final class SchemaBuilder {
 
@@ -94,11 +95,7 @@ final class SchemaBuilder {
         }
     }
 
-    /**
-     * Adds another OperationOptionInfo to the schema. Also, adds this to the
-     * set of supported options for every operation defined by the Connector.
-     */
-    public void defineOperationOption(OperationOptionInfo info) {
+    void defineOperationOption(OperationOptionInfo info) {
         Assertions.nullCheck(info, "info");
         if (declaredOperationOptions.contains(info)) {
             throw new IllegalStateException("OperationOption already defined: " + info.getName());
@@ -116,17 +113,7 @@ final class SchemaBuilder {
         }
     }
 
-    /**
-     * Adds another OperationOptionInfo to the schema. Also, adds this to the
-     * set of supported options for operation defined.
-     *
-     * @param operationOptionInfo
-     * @param operations
-     *
-     * @throws IllegalStateException
-     *             If already defined
-     */
-    public void defineOperationOption(OperationOptionInfo operationOptionInfo,
+    void defineOperationOption(OperationOptionInfo operationOptionInfo,
                                       Class<? extends SPIOperation>... operations) {
         if (operations.length > 0) {
             Assertions.nullCheck(operationOptionInfo, "info");
@@ -158,16 +145,7 @@ final class SchemaBuilder {
         }
     }
 
-    /**
-     * Adds another ObjectClassInfo to the schema.
-     *
-     * Also, adds this to the set of supported classes for every operation
-     * defined by the Connector.
-     *
-     * @throws IllegalStateException
-     *             If already defined
-     */
-    public void defineObjectClass(String type, Set<AttributeInfo> attrInfo) {
+    void defineObjectClass(String type, Set<AttributeInfo> attrInfo) {
         ObjectClassInfoBuilder bld = new ObjectClassInfoBuilder();
         bld.setType(type);
         bld.addAllAttributeInfo(attrInfo);
@@ -175,16 +153,7 @@ final class SchemaBuilder {
         defineObjectClass(obj);
     }
 
-    /**
-     * Adds another OperationOptionInfo to the schema.
-     *
-     * Also, adds this to the set of supported options for every operation
-     * defined by the Connector.
-     *
-     * @throws IllegalStateException
-     *             If already defined
-     */
-    public void defineOperationOption(String optionName, Class<?> type) {
+    void defineOperationOption(String optionName, Class<?> type) {
         OperationOptionInfoBuilder bld = new OperationOptionInfoBuilder();
         bld.setName(optionName);
         bld.setType(type);
@@ -192,25 +161,13 @@ final class SchemaBuilder {
         defineOperationOption(info);
     }
 
-    /**
-     * Adds the given ObjectClassInfo as a supported ObjectClass for the given
-     * operation.
-     *
-     * @param op
-     *            The SPI operation
-     * @param def
-     *            The ObjectClassInfo
-     * @throws IllegalArgumentException
-     *             If the given ObjectClassInfo was not already defined using
-     *             {@link #defineObjectClass(ObjectClassInfo)}.
-     */
-    public void addSupportedObjectClass(Class<? extends SPIOperation> op, ObjectClassInfo def) {
+    void addSupportedObjectClass(Class<? extends SPIOperation> op, ObjectClassInfo ocDef) {
         Assertions.nullCheck(op, "op");
-        Assertions.nullCheck(def, "def");
+        Assertions.nullCheck(ocDef, "def");
         Set<Class<? extends APIOperation>> apis = FrameworkUtil.spi2apis(op);
         apis.retainAll(defaultSupportedOperations);
-        if (!declaredObjectClasses.contains(def)) {
-            throw new IllegalArgumentException("ObjectClass " + def.getType()
+        if (!declaredObjectClasses.contains(ocDef)) {
+            throw new IllegalArgumentException("ObjectClass " + ocDef.getType()
                     + " not defined in schema.");
         }
         for (Class<? extends APIOperation> api : apis) {
@@ -220,32 +177,20 @@ final class SchemaBuilder {
                     throw new IllegalArgumentException("Operation " + op.getName()
                             + " not implement by connector.");
                 }
-                if (infos.contains(def)) {
-                    throw new IllegalArgumentException("ObjectClass " + def.getType()
+                if (infos.contains(ocDef)) {
+                    throw new IllegalArgumentException("ObjectClass " + ocDef.getType()
                             + " already supported for operation " + op.getName());
                 }
-                infos.add(def);
+                infos.add(ocDef);
             }
         }
     }
 
-    /**
-     * Removes the given ObjectClassInfo as a supported ObjectClass for the
-     * given operation.
-     *
-     * @param op
-     *            The SPI operation
-     * @param def
-     *            The ObjectClassInfo
-     * @throws IllegalArgumentException
-     *             If the given ObjectClassInfo was not already defined using
-     *             {@link #defineObjectClass(ObjectClassInfo)}.
-     */
-    public void removeSupportedObjectClass(Class<? extends SPIOperation> op, ObjectClassInfo def) {
+    void removeSupportedObjectClass(Class<? extends SPIOperation> op, ObjectClassInfo ocDef) {
         Assertions.nullCheck(op, "op");
-        Assertions.nullCheck(def, "def");
+        Assertions.nullCheck(ocDef, "def");
         Set<Class<? extends APIOperation>> apis = FrameworkUtil.spi2apis(op);
-        if (!declaredObjectClasses.contains(def)) {
+        if (!declaredObjectClasses.contains(ocDef)) {
             throw new IllegalArgumentException("ObjectClass " + def.getType()
                     + " not defined in schema.");
         }
@@ -253,11 +198,11 @@ final class SchemaBuilder {
             if (objectClassOperation(api)) {
                 if (defaultSupportedOperations.contains(api)) {
                     Set<ObjectClassInfo> infos = supportedObjectClassesByOperation.get(api);
-                    if (null == infos || !infos.contains(def)) {
-                        throw new IllegalArgumentException("ObjectClass " + def.getType()
+                    if (null == infos || !infos.contains(ocDef)) {
+                        throw new IllegalArgumentException("ObjectClass " + ocDef.getType()
                                 + " already removed for operation " + op.getName());
                     }
-                    infos.remove(def);
+                    infos.remove(ocDef);
                 } else {
                     throw new IllegalArgumentException("Operation " + op.getName()
                             + " not implement by connector.");
@@ -266,26 +211,14 @@ final class SchemaBuilder {
         }
     }
 
-    /**
-     * Adds the given OperationOptionInfo as a supported option for the given
-     * operation.
-     *
-     * @param op
-     *            The SPI operation
-     * @param def
-     *            The OperationOptionInfo
-     * @throws IllegalArgumentException
-     *             If the given OperationOptionInfo was not already defined
-     *             using {@link #defineOperationOption(OperationOptionInfo)}.
-     */
-    public void addSupportedOperationOption(Class<? extends SPIOperation> op,
-                                            OperationOptionInfo def) {
+    void addSupportedOperationOption(Class<? extends SPIOperation> op,
+                                            OperationOptionInfo ocDef) {
         Assertions.nullCheck(op, "op");
-        Assertions.nullCheck(def, "def");
+        Assertions.nullCheck(ocDef, "def");
         Set<Class<? extends APIOperation>> apis = FrameworkUtil.spi2apis(op);
         apis.retainAll(defaultSupportedOperations);
-        if (!declaredOperationOptions.contains(def)) {
-            throw new IllegalArgumentException("OperationOption " + def.getName()
+        if (!declaredOperationOptions.contains(ocDef)) {
+            throw new IllegalArgumentException("OperationOption " + ocDef.getName()
                     + " not defined in schema.");
         }
         for (Class<? extends APIOperation> api : apis) {
@@ -295,33 +228,21 @@ final class SchemaBuilder {
                     throw new IllegalArgumentException("Operation " + op.getName()
                             + " not implement by connector.");
                 }
-                if (infos.contains(def)) {
-                    throw new IllegalArgumentException("OperationOption " + def.getName()
+                if (infos.contains(ocDef)) {
+                    throw new IllegalArgumentException("OperationOption " + ocDef.getName()
                             + " already supported for operation " + op.getName());
                 }
-                infos.add(def);
+                infos.add(ocDef);
             }
         }
     }
 
-    /**
-     * Removes the given OperationOptionInfo as a supported option for the given
-     * operation.
-     *
-     * @param op
-     *            The SPI operation
-     * @param def
-     *            The OperationOptionInfo
-     * @throws IllegalArgumentException
-     *             If the given OperationOptionInfo was not already defined
-     *             using {@link #defineOperationOption(OperationOptionInfo)}.
-     */
-    public void removeSupportedOperationOption(Class<? extends SPIOperation> op,
-                                               OperationOptionInfo def) {
+    void removeSupportedOperationOption(Class<? extends SPIOperation> op,
+                                               OperationOptionInfo ocDef) {
         Assertions.nullCheck(op, "op");
-        Assertions.nullCheck(def, "def");
+        Assertions.nullCheck(ocDef, "def");
         Set<Class<? extends APIOperation>> apis = FrameworkUtil.spi2apis(op);
-        if (!declaredOperationOptions.contains(def)) {
+        if (!declaredOperationOptions.contains(ocDef)) {
             throw new IllegalArgumentException("OperationOption " + def.getName()
                     + " not defined in schema.");
         }
@@ -329,11 +250,11 @@ final class SchemaBuilder {
             if (operationOptionOperation(api)) {
                 if (defaultSupportedOperations.contains(api)) {
                     Set<OperationOptionInfo> infos = supportedOptionsByOperation.get(api);
-                    if (null == infos || !infos.contains(def)) {
-                        throw new IllegalArgumentException("OperationOption " + def.getName()
+                    if (null == infos || !infos.contains(ocDef)) {
+                        throw new IllegalArgumentException("OperationOption " + ocDef.getName()
                                 + " already removed for operation " + op.getName());
                     }
-                    infos.remove(def);
+                    infos.remove(ocDef)
                 } else {
                     throw new IllegalArgumentException("Operation " + op.getName()
                             + " not implement by connector.");
@@ -342,47 +263,19 @@ final class SchemaBuilder {
         }
     }
 
-    /**
-     * Clears the operation-specific supported classes.
-     *
-     * Normally, when you add an ObjectClass, using
-     * {@link #defineObjectClass(ObjectClassInfo)}, it is added to all
-     * operations. You may then remove those that you need using
-     * {@link #removeSupportedObjectClass(Class, ObjectClassInfo)}. You may
-     * wish, as an alternative to clear everything out and instead add using
-     * {@link #addSupportedObjectClass(Class, ObjectClassInfo)}.
-     */
-    public void clearSupportedObjectClassesByOperation() {
+    void clearSupportedObjectClassesByOperation() {
         for (Set<ObjectClassInfo> values : supportedObjectClassesByOperation.values()) {
             values.clear();
         }
     }
 
-    /**
-     * Clears the operation-specific supported options.
-     *
-     * Normally, when you add an OperationOptionInfo using
-     * {@link #defineOperationOption(OperationOptionInfo)}, this adds the option
-     * to all operations. You may then remove the option from any operation that
-     * does not support the option using
-     * {@link #removeSupportedOperationOption(Class, OperationOptionInfo)}. An
-     * alternative approach is to clear everything out (using this method) and
-     * then add each option to every operation that supports the option using
-     * {@link #addSupportedOperationOption(Class, OperationOptionInfo)}.
-     */
-    public void clearSupportedOptionsByOperation() {
+    void clearSupportedOptionsByOperation() {
         for (Set<OperationOptionInfo> values : supportedOptionsByOperation.values()) {
             values.clear();
         }
     }
 
-    /**
-     * Builds the {@link Schema} object based on the {@link ObjectClassInfo}s
-     * added so far.
-     *
-     * @return new Schema object based on the info provided.
-     */
-    public Schema build() {
+    Schema build() {
         if (declaredObjectClasses.isEmpty()) {
             throw new IllegalStateException("Must be at least one ObjectClassInfo object!");
         }

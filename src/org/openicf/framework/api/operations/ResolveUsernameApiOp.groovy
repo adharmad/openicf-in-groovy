@@ -1,11 +1,10 @@
 package org.openicf.framework.api.operations
 
-import org.openicf.framework.common.objects.ConnectorObject
 import org.openicf.framework.common.objects.ObjectClass
 import org.openicf.framework.common.objects.OperationOptions
 import org.openicf.framework.common.objects.Uid
 
-interface GetApiOp extends APIOperation {
+interface ResolveUsernameApiOp extends APIOperation {
 
-    public ConnectorObject getObject(ObjectClass objectClass, Uid uid, OperationOptions options);
+    public Uid resolveUsername(ObjectClass objectClass, String username, OperationOptions options);
 }

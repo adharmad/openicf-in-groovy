@@ -1,4 +1,6 @@
 package org.openicf.framework.api.operations
 
-class ValidateApiOp {
+interface ValidateApiOp extends APIOperation {
+
+    void validate();
 }

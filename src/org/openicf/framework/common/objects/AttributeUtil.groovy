@@ -24,7 +24,6 @@ class AttributeUtil {
         return NameUtil.createSpecialName(name);
     }
 
-
     static String getStringValue(final Attribute attr) {
         final Object obj = getSingleValue(attr);
         return obj == null ? null : (String) obj;

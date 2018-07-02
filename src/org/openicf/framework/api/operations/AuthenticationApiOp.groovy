@@ -7,6 +7,6 @@ import org.openicf.framework.common.security.GuardedString;
 
 interface AuthenticationApiOp extends APIOperation {
 
-    public Uid authenticate(ObjectClass objectClass, String username, GuardedString password,
+    Uid authenticate(ObjectClass objectClass, String username, GuardedString password,
                             OperationOptions options);
 }

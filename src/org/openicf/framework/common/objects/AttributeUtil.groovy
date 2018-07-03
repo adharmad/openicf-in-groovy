@@ -5,6 +5,9 @@ import org.openicf.framework.common.CollectionUtil
 import org.openicf.framework.common.security.GuardedByteArray
 import org.openicf.framework.common.security.GuardedString
 
+import static org.openicf.framework.common.Assertions.*
+import static org.openicf.framework.common.CollectionUtil.*
+
 class AttributeUtil {
 
     static boolean isSpecial(Attribute attr) {
@@ -195,7 +198,7 @@ class AttributeUtil {
 
     static Attribute find(final String name, final Set<Attribute> attrs) {
         Assertions.nullCheck(name, "name");
-        final Set<Attribute> set = CollectionUtil.nullAsEmpty(attrs);
+        final Set<Attribute> set = nullAsEmpty(attrs);
         for (Attribute attr : set) {
             if (attr.is(name)) {
                 return attr;

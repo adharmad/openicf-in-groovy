@@ -1,5 +1,7 @@
 package org.openicf.framework.common.objects.filter
 
+import org.openicf.framework.common.CollectionUtil
+
 abstract class CompositeFilter implements Filter {
 
     Filter left;
